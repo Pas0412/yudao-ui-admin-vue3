@@ -89,7 +89,8 @@
         mode="pop"
         @success="handleLogin"
       />
-      <el-col :span="24" class="px-10px">
+      <!-- 其他登录方式按钮 -->
+      <!-- <el-col :span="24" class="px-10px">
         <el-form-item>
           <el-row :gutter="5" justify="space-between" style="width: 100%">
             <el-col :span="8">
@@ -115,8 +116,9 @@
             </el-col>
           </el-row>
         </el-form-item>
-      </el-col>
-      <el-divider content-position="center">{{ t('login.otherLogin') }}</el-divider>
+      </el-col> -->
+      <!-- 社交登录 -->
+      <!-- <el-divider content-position="center">{{ t('login.otherLogin') }}</el-divider>
       <el-col :span="24" class="px-10px">
         <el-form-item>
           <div class="w-full flex justify-between">
@@ -131,8 +133,9 @@
             />
           </div>
         </el-form-item>
-      </el-col>
-      <el-divider content-position="center">萌新必读</el-divider>
+      </el-col> -->
+      <!-- 萌新必读 -->
+      <!-- <el-divider content-position="center">萌新必读</el-divider>
       <el-col :span="24" class="px-10px">
         <el-form-item>
           <div class="w-full flex justify-between">
@@ -146,7 +149,7 @@
             </el-link>
           </div>
         </el-form-item>
-      </el-col>
+      </el-col> -->
     </el-row>
   </el-form>
 </template>
@@ -195,7 +198,7 @@ const loginData = reactive({
     username: import.meta.env.VITE_APP_DEFAULT_LOGIN_USERNAME || '',
     password: import.meta.env.VITE_APP_DEFAULT_LOGIN_PASSWORD || '',
     captchaVerification: '',
-    rememberMe: true // 默认记录我。如果不需要，可手动修改
+    rememberMe: false // 默认不记录我，避免自动填充
   }
 })
 
@@ -335,7 +338,7 @@ watch(
   }
 )
 onMounted(() => {
-  getLoginFormCache()
+  // getLoginFormCache() // 已禁用自动填充功能
   getTenantByWebsite()
 })
 </script>
