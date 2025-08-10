@@ -388,6 +388,145 @@ export const BrokerageWithdrawTypeEnum = {
   }
 }
 
+// ========== MALL - 地区代理模块 ==========
+/**
+ * 地区代理关系绑定模式枚举
+ */
+export const AreaAgentBindModeEnum = {
+  ANYTIME: {
+    mode: 1,
+    name: '首次绑定'
+  },
+  REGISTER: {
+    mode: 2,
+    name: '注册绑定'
+  },
+  OVERRIDE: {
+    mode: 3,
+    name: '覆盖绑定'
+  }
+}
+
+/**
+ * 地区代理申请条件枚举
+ */
+export const AreaAgentEnabledConditionEnum = {
+  ALL: {
+    condition: 1,
+    name: '人人可申请'
+  },
+  INVITE_COUNT: {
+    condition: 2,
+    name: '邀请用户数量达标'
+  },
+  CONSUME_PRICE: {
+    condition: 3,
+    name: '消费金额达标'
+  }
+}
+
+/**
+ * 地区代理佣金记录业务类型枚举
+ */
+export const AreaAgentRecordBizTypeEnum = {
+  ORDER: {
+    type: 1,
+    name: '获得代理佣金'
+  },
+  WITHDRAW: {
+    type: 2,
+    name: '提现申请'
+  }
+}
+
+/**
+ * 地区代理佣金提现状态枚举
+ */
+export const AreaAgentWithdrawStatusEnum = {
+  AUDITING: {
+    status: 0,
+    name: '审核中'
+  },
+  AUDIT_SUCCESS: {
+    status: 10,
+    name: '审核通过'
+  },
+  AUDIT_FAIL: {
+    status: 20,
+    name: '审核不通过'
+  },
+  WITHDRAW_SUCCESS: {
+    status: 11,
+    name: '提现成功'
+  },
+  WITHDRAW_FAIL: {
+    status: 21,
+    name: '提现失败'
+  }
+}
+
+/**
+ * 地区代理佣金提现类型枚举
+ */
+export const AreaAgentWithdrawTypeEnum = {
+  WALLET: {
+    type: 1,
+    name: '钱包'
+  },
+  BANK: {
+    type: 2,
+    name: '银行卡'
+  },
+  WECHAT: {
+    type: 3,
+    name: '微信'
+  },
+  ALIPAY: {
+    type: 4,
+    name: '支付宝'
+  }
+}
+
+/**
+ * 地区代理申请状态枚举
+ */
+export const AreaAgentApplyStatusEnum = {
+  AUDITING: {
+    status: 0,
+    name: '待审核'
+  },
+  APPROVED: {
+    status: 1,
+    name: '审核通过'
+  },
+  REJECTED: {
+    status: 2,
+    name: '审核拒绝'
+  },
+  DISABLED: {
+    status: 3,
+    name: '已禁用'
+  }
+}
+
+/**
+ * 地区代理级别枚举
+ */
+export const AreaAgentLevelEnum = {
+  PROVINCE: {
+    level: 1,
+    name: '省级代理'
+  },
+  CITY: {
+    level: 2,
+    name: '市级代理'
+  },
+  AREA: {
+    level: 3,
+    name: '区县级代理'
+  }
+}
+
 /**
  * 配送方式枚举
  */

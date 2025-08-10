@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>路由调试页面</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        .debug-section { margin: 20px 0; padding: 15px; border: 1px solid #ddd; border-radius: 5px; }
+        .debug-title { font-weight: bold; color: #333; margin-bottom: 10px; }
+        .debug-content { background: #f5f5f5; padding: 10px; border-radius: 3px; white-space: pre-wrap; }
+        .test-button { padding: 10px 20px; margin: 5px; background: #007bff; color: white; border: none; border-radius: 3px; cursor: pointer; }
+        .test-button:hover { background: #0056b3; }
+    </style>
+</head>
+<body>
+    <h1>路由组件匹配调试</h1>
+    
+    <div class="debug-section">
+        <div class="debug-title">测试数据</div>
+        <div class="debug-content" id="testData">加载中...</div>
+    </div>
+    
+    <div class="debug-section">
+        <div class="debug-title">操作</div>
+        <button class="test-button" onclick="testRouteMatching()">测试路由匹配</button>
+        <button class="test-button" onclick="showAllModules()">显示所有模块</button>
+        <button class="test-button" onclick="testSpecificRoutes()">测试地区代理路由</button>
+    </div>
+    
+    <div class="debug-section">
+        <div class="debug-title">调试结果</div>
+        <div class="debug-content" id="debugResult">等待测试...</div>
+    </div>
+
+    <script>
+        // 模拟后端菜单数据
+        const testMenuData = [
+            {
+                id: 5035,
+                name: '申请管理',
+                component: 'mall/trade/regionalAgent/apply/index',
+                componentName: 'RegionalAgentApply',
+                path: 'apply'
+            },
+            {
+                id: 5038,
+                name: '地区代理管理',
+                component: 'mall/trade/regionalAgent/index',
+                componentName: 'RegionalAgent',
+                path: 'agent'
+            },
+            {
+                id: 5044,
+                name: '佣金记录',
+                component: 'mall/trade/regionalAgent/record/index',
+                componentName: 'RegionalAgentRecord',
+                path: 'record'
+            },
+            {
+                id: 5048,
+                name: '提现管理',
+                component: 'mall/trade/regionalAgent/withdraw/index',
+                componentName: 'RegionalAgentWithdraw',
+                path: 'withdraw'
+            }
+        ];
+        
+        // 模拟 import.meta.glob 的结果
+        const mockModules = {
+            '/src/views/mall/trade/regionalAgent/apply/index.vue': () => import('/src/views/mall/trade/regionalAgent/apply/index.vue'),
+            '/src/views/mall/trade/regionalAgent/index.vue': () => import('/src/views/mall/trade/regionalAgent/index.vue'),
+            '/src/views/mall/trade/regionalAgent/record/index.vue': () => import('/src/views/mall/trade/regionalAgent/record/index.vue'),
+            '/src/views/mall/trade/regionalAgent/withdraw/index.vue': () => import('/src/views/mall/trade/regionalAgent/withdraw/index.vue')
+        };
+        
+        function updateTestData() {
+            document.getElementById('testData').textContent = JSON.stringify(testMenuData, null, 2);
+        }
+        
+        function testRouteMatching() {
+            const modulesRoutesKeys = Object.keys(mockModules);
+            const results = [];
+            
+            testMenuData.forEach(route => {
+                // 原始匹配逻辑
+                let index = modulesRoutesKeys.findIndex((ev) => ev.includes(route.component));
+                
+                // 新的精确匹配逻辑
+                if (index === -1) {
+                    const componentPath = `/src/views/${route.component}.vue`;
+                    index = modulesRoutesKeys.findIndex((ev) => ev === componentPath);
+                    
+                    if (index === -1) {
+                        const indexPath = `/src/views/${route.component}/index.vue`;
+                        index = modulesRoutesKeys.findIndex((ev) => ev === indexPath);
+                    }
+                }
+                
+                results.push({
+                    routeName: route.name,
+                    component: route.component,
+                    componentName: route.componentName,
+                    foundIndex: index,
+                    matchedKey: index >= 0 ? modulesRoutesKeys[index] : 'NOT FOUND',
+                    expectedPath: `/src/views/${route.component}/index.vue`
+                });
+            });
+            
+            document.getElementById('debugResult').textContent = JSON.stringify(results, null, 2);
+        }
+        
+        function showAllModules() {
+            const modulesRoutesKeys = Object.keys(mockModules);
+            document.getElementById('debugResult').textContent = 
+                '所有可用模块:\n' + modulesRoutesKeys.join('\n');
+        }
+        
+        function testSpecificRoutes() {
+            const modulesRoutesKeys = Object.keys(mockModules);
+            const regionalAgentKeys = modulesRoutesKeys.filter(key => key.includes('regionalAgent'));
+            
+            document.getElementById('debugResult').textContent = 
+                '地区代理相关模块:\n' + regionalAgentKeys.join('\n');
+        }
+        
+        // 页面加载时初始化
+        updateTestData();
+    </script>
+</body>
+</html>

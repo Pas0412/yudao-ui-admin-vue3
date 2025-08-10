@@ -115,9 +115,23 @@ export const generateRoute = (routes: AppCustomRouteRecordRaw[]): AppRouteRecord
         redirect: route.redirect,
         meta: meta
       }
-      const index = route?.component
+      let index = route?.component
         ? modulesRoutesKeys.findIndex((ev) => ev.includes(route.component))
         : modulesRoutesKeys.findIndex((ev) => ev.includes(route.path))
+      
+      // 如果没有找到匹配的组件，尝试更精确的匹配
+      if (index === -1 && route?.component) {
+        // 尝试匹配 /src/views/ + component + .vue 的格式
+        const componentPath = `/src/views/${route.component}.vue`
+        index = modulesRoutesKeys.findIndex((ev) => ev === componentPath)
+        
+        // 如果还是没找到，尝试匹配 /src/views/ + component + /index.vue 的格式
+        if (index === -1) {
+          const indexPath = `/src/views/${route.component}/index.vue`
+          index = modulesRoutesKeys.findIndex((ev) => ev === indexPath)
+        }
+      }
+      
       childrenData.component = modules[modulesRoutesKeys[index]]
       data.children = [childrenData]
     } else {
@@ -138,9 +152,33 @@ export const generateRoute = (routes: AppCustomRouteRecordRaw[]): AppRouteRecord
         // 菜单
       } else {
         // 对后端传component组件路径和不传做兼容（如果后端传component组件路径，那么path可以随便写，如果不传，component组件路径会根path保持一致）
-        const index = route?.component
+        let index = route?.component
           ? modulesRoutesKeys.findIndex((ev) => ev.includes(route.component))
           : modulesRoutesKeys.findIndex((ev) => ev.includes(route.path))
+        
+        // 如果没有找到匹配的组件，尝试更精确的匹配
+        if (index === -1 && route?.component) {
+          // 尝试匹配 /src/views/ + component + .vue 的格式
+          const componentPath = `/src/views/${route.component}.vue`
+          index = modulesRoutesKeys.findIndex((ev) => ev === componentPath)
+          
+          // 如果还是没找到，尝试匹配 /src/views/ + component + /index.vue 的格式
+          if (index === -1) {
+            const indexPath = `/src/views/${route.component}/index.vue`
+            index = modulesRoutesKeys.findIndex((ev) => ev === indexPath)
+          }
+          
+          console.log('=== 路由组件匹配调试 ===', {
+            routeName: route.name,
+            component: route.component,
+            componentPath,
+            indexPath: `/src/views/${route.component}/index.vue`,
+            foundIndex: index,
+            matchedKey: index >= 0 ? modulesRoutesKeys[index] : 'NOT FOUND',
+            allKeys: modulesRoutesKeys.filter(key => key.includes('regionalAgent'))
+          })
+        }
+        
         data.component = modules[modulesRoutesKeys[index]]
       }
       if (route.children) {

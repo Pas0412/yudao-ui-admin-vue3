@@ -187,6 +187,16 @@ export enum DICT_TYPE {
   BROKERAGE_RECORD_BIZ_TYPE = 'brokerage_record_biz_type', // 佣金业务类型
   BROKERAGE_RECORD_STATUS = 'brokerage_record_status', // 佣金状态
   BROKERAGE_WITHDRAW_STATUS = 'brokerage_withdraw_status', // 佣金提现状态
+  
+  // ========== MALL - 地区代理模块 ==========
+  AREA_AGENT_ENABLED_CONDITION = 'area_agent_enabled_condition', // 地区代理申请条件
+  AREA_AGENT_BIND_MODE = 'area_agent_bind_mode', // 地区代理关系绑定模式
+  AREA_AGENT_BANK_NAME = 'area_agent_bank_name', // 地区代理佣金提现银行
+  AREA_AGENT_WITHDRAW_TYPE = 'area_agent_withdraw_type', // 地区代理佣金提现类型
+  AREA_AGENT_RECORD_BIZ_TYPE = 'area_agent_record_biz_type', // 地区代理佣金业务类型
+  AREA_AGENT_RECORD_STATUS = 'area_agent_record_status', // 地区代理佣金状态
+  AREA_AGENT_WITHDRAW_STATUS = 'area_agent_withdraw_status', // 地区代理佣金提现状态
+  AREA_AGENT_APPLY_STATUS = 'area_agent_apply_status', // 地区代理申请状态
 
   // ========== MALL - 营销模块 ==========
   PROMOTION_DISCOUNT_TYPE = 'promotion_discount_type', // 优惠类型
