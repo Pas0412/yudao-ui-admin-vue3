@@ -36,23 +36,18 @@ export interface RegionalAgentWithdrawPageReqVO {
   createTime?: Date[]
 }
 
-export interface RegionalAgentWithdrawAuditReqVO {
+export interface RegionalAgentWithdrawApproveReqVO {
   id: number
-  auditStatus: number
+  status: number
   auditReason?: string
+}
+
+// 审核地区代理提现申请
+export const approveRegionalAgentWithdraw = async (data: RegionalAgentWithdrawApproveReqVO) => {
+  return await request.put({ url: `/product/regional-agent-withdraw/approve`, data })
 }
 
 // 查询地区代理提现申请分页列表
 export const getRegionalAgentWithdrawPage = async (params: RegionalAgentWithdrawPageReqVO) => {
-  return await request.get({ url: `/trade/regional-agent/withdraw/page`, params })
-}
-
-// 查询地区代理提现申请详情
-export const getRegionalAgentWithdraw = async (id: number) => {
-  return await request.get({ url: `/trade/regional-agent/withdraw/get?id=` + id })
-}
-
-// 审核地区代理提现申请
-export const auditRegionalAgentWithdraw = async (data: RegionalAgentWithdrawAuditReqVO) => {
-  return await request.put({ url: `/trade/regional-agent/withdraw/audit`, data })
+  return await request.get({ url: `/product/regional-agent-withdraw/page`, params })
 }

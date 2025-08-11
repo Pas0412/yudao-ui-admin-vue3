@@ -58,19 +58,16 @@
           />
         </el-select>
       </el-form-item>
-      <el-form-item label="代理级别" prop="agentLevel">
+      <el-form-item label="地区类型" prop="areaType">
         <el-select
-          v-model="queryParams.agentLevel"
+          v-model="queryParams.areaType"
           class="!w-240px"
           clearable
-          placeholder="请选择代理级别"
+          placeholder="请选择地区类型"
         >
-          <el-option
-            v-for="level in Object.values(AreaAgentLevelEnum)"
-            :key="level.level"
-            :label="level.name"
-            :value="level.level"
-          />
+          <el-option label="省" :value="1" />
+          <el-option label="市" :value="2" />
+          <el-option label="区/县" :value="3" />
         </el-select>
       </el-form-item>
       <el-form-item label="创建时间" prop="createTime">
@@ -113,28 +110,20 @@
           </div>
         </template>
       </el-table-column>
-      <el-table-column align="center" label="代理级别" min-width="100px" prop="agentLevel">
+      <el-table-column align="center" label="地区类型" min-width="100px" prop="areaType">
         <template #default="scope">
-          <el-tag v-if="scope.row.agentLevel === AreaAgentLevelEnum.PROVINCE.level" type="danger">
-            {{ AreaAgentLevelEnum.PROVINCE.name }}
+          <el-tag v-if="scope.row.areaType === 1" type="danger">
+            省
           </el-tag>
-          <el-tag v-else-if="scope.row.agentLevel === AreaAgentLevelEnum.CITY.level" type="warning">
-            {{ AreaAgentLevelEnum.CITY.name }}
+          <el-tag v-else-if="scope.row.areaType === 2" type="warning">
+            市
           </el-tag>
-          <el-tag v-else-if="scope.row.agentLevel === AreaAgentLevelEnum.AREA.level" type="info">
-            {{ AreaAgentLevelEnum.AREA.name }}
+          <el-tag v-else-if="scope.row.areaType === 3" type="info">
+            区/县
           </el-tag>
         </template>
       </el-table-column>
-      <el-table-column align="center" label="代理区域" min-width="150px">
-        <template #default="scope">
-          <div>
-            <div v-if="scope.row.provinceName">{{ scope.row.provinceName }}</div>
-            <div v-if="scope.row.cityName">{{ scope.row.cityName }}</div>
-            <div v-if="scope.row.areaName">{{ scope.row.areaName }}</div>
-          </div>
-        </template>
-      </el-table-column>
+      <el-table-column align="center" label="代理区域" min-width="150px" prop="areaName" />
       <el-table-column align="center" label="业务类型" min-width="100px" prop="bizType">
         <template #default="scope">
           <dict-tag :type="DICT_TYPE.AREA_AGENT_RECORD_BIZ_TYPE" :value="scope.row.bizType" />
@@ -162,7 +151,7 @@
       <el-table-column align="center" fixed="right" label="操作" width="100px">
         <template #default="scope">
           <el-button
-            v-hasPermi="['trade:regional-agent-record:query']"
+            v-hasPermi="['product:regional-agent-record:query']"
             link
             type="primary"
             @click="handleDetail(scope.row)"
@@ -205,7 +194,7 @@ const queryParams = reactive({
   userId: null,
   bizType: null,
   status: null,
-  agentLevel: null,
+  areaType: null,
   createTime: []
 })
 const queryFormRef = ref() // 搜索的表单

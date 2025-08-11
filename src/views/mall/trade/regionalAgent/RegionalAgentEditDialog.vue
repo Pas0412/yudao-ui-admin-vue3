@@ -16,20 +16,11 @@
           </div>
         </div>
       </el-form-item>
-      <el-form-item label="真实姓名" prop="realName">
-        <el-input v-model="formData.realName" placeholder="请输入真实姓名" />
-      </el-form-item>
-      <el-form-item label="手机号码" prop="mobile">
-        <el-input v-model="formData.mobile" placeholder="请输入手机号码" />
-      </el-form-item>
-      <el-form-item label="代理级别" prop="agentLevel">
-        <el-select v-model="formData.agentLevel" placeholder="请选择代理级别">
-          <el-option
-            v-for="level in Object.values(AreaAgentLevelEnum)"
-            :key="level.level"
-            :label="level.name"
-            :value="level.level"
-          />
+      <el-form-item label="地区类型" prop="areaType">
+        <el-select v-model="formData.areaType" placeholder="请选择地区类型">
+          <el-option label="省份" :value="1" />
+          <el-option label="城市" :value="2" />
+          <el-option label="区县" :value="3" />
         </el-select>
       </el-form-item>
       <el-form-item label="代理区域" prop="areaId">
@@ -43,11 +34,11 @@
           @change="handleAreaChange"
         />
       </el-form-item>
-      <el-form-item label="申请说明" prop="applyReason">
+      <el-form-item label="审核备注" prop="auditRemark">
         <el-input
-          v-model="formData.applyReason"
+          v-model="formData.auditRemark"
           :rows="3"
-          placeholder="请输入申请说明"
+          placeholder="请输入审核备注"
           type="textarea"
         />
       </el-form-item>
@@ -76,22 +67,15 @@ const formData = ref({
   userId: undefined,
   nickname: '',
   avatar: '',
-  realName: '',
-  mobile: '',
-  agentLevel: undefined,
-  provinceId: undefined,
-  cityId: undefined,
   areaId: undefined,
-  provinceName: '',
-  cityName: '',
+  areaType: undefined,
   areaName: '',
-  applyReason: ''
+  auditRemark: ''
 })
 const formRules = reactive({
-  realName: [{ required: true, message: '真实姓名不能为空', trigger: 'blur' }],
-  mobile: [{ required: true, message: '手机号码不能为空', trigger: 'blur' }],
-  agentLevel: [{ required: true, message: '代理级别不能为空', trigger: 'change' }],
-  areaId: [{ required: true, message: '代理区域不能为空', trigger: 'change' }]
+  areaType: [{ required: true, message: '地区类型不能为空', trigger: 'change' }],
+  areaId: [{ required: true, message: '代理区域不能为空', trigger: 'change' }],
+  areaName: [{ required: true, message: '地区名称不能为空', trigger: 'blur' }]
 })
 const formRef = ref() // 表单 Ref
 const areaList = ref([]) // 地区列表
@@ -111,10 +95,6 @@ const open = async (id?: number) => {
       // 设置地区选择器的值
       if (data.areaId) {
         areaIds.value = [data.areaId]
-      } else if (data.cityId) {
-        areaIds.value = [data.cityId]
-      } else if (data.provinceId) {
-        areaIds.value = [data.provinceId]
       }
     } finally {
       formLoading.value = false
@@ -150,16 +130,10 @@ const resetForm = () => {
     userId: undefined,
     nickname: '',
     avatar: '',
-    realName: '',
-    mobile: '',
-    agentLevel: undefined,
-    provinceId: undefined,
-    cityId: undefined,
     areaId: undefined,
-    provinceName: '',
-    cityName: '',
+    areaType: undefined,
     areaName: '',
-    applyReason: ''
+    auditRemark: ''
   }
   areaIds.value = []
   formRef.value?.resetFields()
@@ -173,12 +147,9 @@ const getAreaList = async () => {
 /** 处理地区变化 */
 const handleAreaChange = (value: number) => {
   if (!value) {
-    formData.value.provinceId = undefined
-    formData.value.cityId = undefined
     formData.value.areaId = undefined
-    formData.value.provinceName = ''
-    formData.value.cityName = ''
     formData.value.areaName = ''
+    formData.value.areaType = undefined
     return
   }
   
@@ -201,68 +172,9 @@ const handleAreaChange = (value: number) => {
   const result = findAreaInfo(areaList.value, value)
   if (result) {
     const { area, level } = result
-    
-    // 重置所有地区信息
-    formData.value.provinceId = undefined
-    formData.value.cityId = undefined
-    formData.value.areaId = undefined
-    formData.value.provinceName = ''
-    formData.value.cityName = ''
-    formData.value.areaName = ''
-    
-    // 根据级别设置对应的地区信息
-    if (level === 1) { // 省级
-      formData.value.provinceId = area.id
-      formData.value.provinceName = area.name
-    } else if (level === 2) { // 市级
-      formData.value.cityId = area.id
-      formData.value.cityName = area.name
-      // 查找父级省份
-      const findParent = (areas: any[], targetId: number): any => {
-        for (const province of areas) {
-          if (province.children) {
-            for (const city of province.children) {
-              if (city.id === targetId) {
-                return province
-              }
-            }
-          }
-        }
-        return null
-      }
-      const province = findParent(areaList.value, area.id)
-      if (province) {
-        formData.value.provinceId = province.id
-        formData.value.provinceName = province.name
-      }
-    } else if (level === 3) { // 区县级
-      formData.value.areaId = area.id
-      formData.value.areaName = area.name
-      // 查找父级市和省
-      const findParents = (areas: any[], targetId: number): any => {
-        for (const province of areas) {
-          if (province.children) {
-            for (const city of province.children) {
-              if (city.children) {
-                for (const district of city.children) {
-                  if (district.id === targetId) {
-                    return { province, city }
-                  }
-                }
-              }
-            }
-          }
-        }
-        return null
-      }
-      const parents = findParents(areaList.value, area.id)
-      if (parents) {
-        formData.value.provinceId = parents.province.id
-        formData.value.provinceName = parents.province.name
-        formData.value.cityId = parents.city.id
-        formData.value.cityName = parents.city.name
-      }
-    }
+    formData.value.areaId = area.id
+    formData.value.areaName = area.name
+    formData.value.areaType = level
   }
 }
 </script>

@@ -166,9 +166,9 @@
       </el-table-column>
       <el-table-column align="center" fixed="right" label="操作" width="200px">
         <template #default="scope">
-          <template v-if="scope.row.status === AreaAgentWithdrawStatusEnum.AUDITING.status">
+          <template v-if="scope.row.status === 1">
             <el-button
-              v-hasPermi="['trade:regional-agent-withdraw:audit']"
+              v-hasPermi="['product:regional-agent-withdraw:approve']"
               link
               type="primary"
               @click="handleApprove(scope.row)"
@@ -176,7 +176,7 @@
               通过
             </el-button>
             <el-button
-              v-hasPermi="['trade:regional-agent-withdraw:audit']"
+              v-hasPermi="['product:regional-agent-withdraw:approve']"
               link
               type="danger"
               @click="handleReject(scope.row)"
@@ -185,7 +185,7 @@
             </el-button>
           </template>
           <el-button
-            v-hasPermi="['trade:regional-agent-withdraw:query']"
+            v-hasPermi="['product:regional-agent-withdraw:query']"
             link
             type="info"
             @click="handleDetail(scope.row)"
@@ -268,9 +268,9 @@ const resetQuery = () => {
 const handleApprove = async (row: RegionalAgentWithdrawApi.RegionalAgentWithdrawVO) => {
   try {
     await message.confirm(`确认要通过"${row.nickname}"的提现申请吗？`)
-    await RegionalAgentWithdrawApi.auditRegionalAgentWithdraw({
+    await RegionalAgentWithdrawApi.approveRegionalAgentWithdraw({
       id: row.id,
-      auditStatus: 20, // 审核通过
+      status: 2, // 审核通过
       auditReason: '审核通过'
     })
     message.success('审核通过成功')
@@ -281,7 +281,7 @@ const handleApprove = async (row: RegionalAgentWithdrawApi.RegionalAgentWithdraw
 /** 审核拒绝 */
 const auditFormRef = ref()
 const handleReject = (row: RegionalAgentWithdrawApi.RegionalAgentWithdrawVO) => {
-  auditFormRef.value.open(row, 30) // 审核拒绝
+  auditFormRef.value.open(row, 3) // 审核不通过
 }
 
 /** 查看详情 */

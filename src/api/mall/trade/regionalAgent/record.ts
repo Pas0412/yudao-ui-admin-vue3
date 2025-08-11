@@ -34,12 +34,17 @@ export interface RegionalAgentRecordPageReqVO {
   createTime?: Date[]
 }
 
-// 查询地区代理佣金记录分页列表
-export const getRegionalAgentRecordPage = async (params: RegionalAgentRecordPageReqVO) => {
-  return await request.get({ url: `/trade/regional-agent/record/page`, params })
-}
-
 // 查询地区代理佣金记录详情
 export const getRegionalAgentRecord = async (id: number) => {
-  return await request.get({ url: `/trade/regional-agent/record/get?id=` + id })
+  return await request.get({ url: `/product/regional-agent-record/get?id=` + id })
+}
+
+// 查询地区代理佣金记录分页列表
+export const getRegionalAgentRecordPage = async (params: RegionalAgentRecordPageReqVO) => {
+  return await request.get({ url: `/product/regional-agent-record/page`, params })
+}
+
+// 导出地区代理佣金记录
+export const exportRegionalAgentRecord = async (params: RegionalAgentRecordPageReqVO) => {
+  return await request.download({ url: `/product/regional-agent-record/export`, params })
 }

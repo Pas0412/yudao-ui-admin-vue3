@@ -16,23 +16,19 @@
           {{ formData.nickname }}
         </div>
       </el-descriptions-item>
-      <el-descriptions-item label="代理级别">
-        <el-tag v-if="formData.agentLevel === AreaAgentLevelEnum.PROVINCE.level" type="danger">
-          {{ AreaAgentLevelEnum.PROVINCE.name }}
+      <el-descriptions-item label="地区类型">
+        <el-tag v-if="formData.areaType === 1" type="danger">
+          省
         </el-tag>
-        <el-tag v-else-if="formData.agentLevel === AreaAgentLevelEnum.CITY.level" type="warning">
-          {{ AreaAgentLevelEnum.CITY.name }}
+        <el-tag v-else-if="formData.areaType === 2" type="warning">
+          市
         </el-tag>
-        <el-tag v-else-if="formData.agentLevel === AreaAgentLevelEnum.AREA.level" type="info">
-          {{ AreaAgentLevelEnum.AREA.name }}
+        <el-tag v-else-if="formData.areaType === 3" type="info">
+          区/县
         </el-tag>
       </el-descriptions-item>
       <el-descriptions-item label="代理区域">
-        <div>
-          <span v-if="formData.provinceName">{{ formData.provinceName }}</span>
-          <span v-if="formData.cityName"> / {{ formData.cityName }}</span>
-          <span v-if="formData.areaName"> / {{ formData.areaName }}</span>
-        </div>
+        {{ formData.areaName }}
       </el-descriptions-item>
       <el-descriptions-item label="业务类型">
         <dict-tag :type="DICT_TYPE.AREA_AGENT_RECORD_BIZ_TYPE" :value="formData.bizType" />

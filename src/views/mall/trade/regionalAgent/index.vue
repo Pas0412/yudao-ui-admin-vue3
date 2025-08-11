@@ -19,19 +19,16 @@
           @keyup.enter="handleQuery"
         />
       </el-form-item>
-      <el-form-item label="代理级别" prop="agentLevel">
+      <el-form-item label="地区类型" prop="areaType">
         <el-select
-          v-model="queryParams.agentLevel"
+          v-model="queryParams.areaType"
           class="!w-240px"
           clearable
-          placeholder="请选择代理级别"
+          placeholder="请选择地区类型"
         >
-          <el-option
-            v-for="level in Object.values(AreaAgentLevelEnum)"
-            :key="level.level"
-            :label="level.name"
-            :value="level.level"
-          />
+          <el-option label="省份" :value="1" />
+          <el-option label="城市" :value="2" />
+          <el-option label="区县" :value="3" />
         </el-select>
       </el-form-item>
       <el-form-item label="代理状态" prop="status">
@@ -88,30 +85,21 @@
           </div>
         </template>
       </el-table-column>
-      <el-table-column align="center" label="真实姓名" min-width="100px" prop="realName" />
-      <el-table-column align="center" label="手机号码" min-width="120px" prop="mobile" />
-      <el-table-column align="center" label="代理级别" min-width="100px" prop="agentLevel">
+
+      <el-table-column align="center" label="地区类型" min-width="100px" prop="areaType">
         <template #default="scope">
-          <el-tag v-if="scope.row.agentLevel === AreaAgentLevelEnum.PROVINCE.level" type="danger">
-            {{ AreaAgentLevelEnum.PROVINCE.name }}
+          <el-tag v-if="scope.row.areaType === 1" type="danger">
+            省份
           </el-tag>
-          <el-tag v-else-if="scope.row.agentLevel === AreaAgentLevelEnum.CITY.level" type="warning">
-            {{ AreaAgentLevelEnum.CITY.name }}
+          <el-tag v-else-if="scope.row.areaType === 2" type="warning">
+            城市
           </el-tag>
-          <el-tag v-else-if="scope.row.agentLevel === AreaAgentLevelEnum.AREA.level" type="info">
-            {{ AreaAgentLevelEnum.AREA.name }}
+          <el-tag v-else-if="scope.row.areaType === 3" type="info">
+            区县
           </el-tag>
         </template>
       </el-table-column>
-      <el-table-column align="center" label="代理区域" min-width="150px">
-        <template #default="scope">
-          <div>
-            <div v-if="scope.row.provinceName">{{ scope.row.provinceName }}</div>
-            <div v-if="scope.row.cityName">{{ scope.row.cityName }}</div>
-            <div v-if="scope.row.areaName">{{ scope.row.areaName }}</div>
-          </div>
-        </template>
-      </el-table-column>
+      <el-table-column align="center" label="代理区域" min-width="150px" prop="areaName" />
       <el-table-column align="center" label="佣金统计" min-width="120px">
         <template #default="scope">
           <div>
@@ -129,11 +117,14 @@
       />
       <el-table-column align="center" label="代理状态" min-width="100px" prop="status">
         <template #default="scope">
-          <el-tag v-if="scope.row.status === AreaAgentApplyStatusEnum.APPROVED.status" type="success">
-            {{ AreaAgentApplyStatusEnum.APPROVED.name }}
+          <el-tag v-if="scope.row.status === 1" type="warning">
+            待审核
           </el-tag>
-          <el-tag v-else-if="scope.row.status === AreaAgentApplyStatusEnum.DISABLED.status" type="info">
-            {{ AreaAgentApplyStatusEnum.DISABLED.name }}
+          <el-tag v-else-if="scope.row.status === 2" type="success">
+            已通过
+          </el-tag>
+          <el-tag v-else-if="scope.row.status === 3" type="danger">
+            已拒绝
           </el-tag>
         </template>
       </el-table-column>
@@ -141,8 +132,8 @@
         <template #default="scope">
           <el-dropdown
             v-hasPermi="[
-              'trade:regional-agent:update-status',
-              'trade:regional-agent:query'
+              'product:regional-agent:approve',
+              'product:regional-agent:query'
             ]"
             @command="(command) => handleCommand(command, scope.row)"
           >
@@ -153,45 +144,45 @@
             <template #dropdown>
               <el-dropdown-menu>
                 <el-dropdown-item
-                  v-hasPermi="['trade:regional-agent:query']"
+                  v-hasPermi="['product:regional-agent:query']"
                   command="detail"
                 >
                   查看详情
                 </el-dropdown-item>
                 <el-dropdown-item
-                  v-hasPermi="['trade:regional-agent:query']"
+                  v-hasPermi="['product:regional-agent-record:query']"
                   command="record"
                 >
                   佣金记录
                 </el-dropdown-item>
                 <el-dropdown-item
-                  v-hasPermi="['trade:regional-agent:query']"
+                  v-hasPermi="['product:regional-agent-withdraw:query']"
                   command="withdraw"
                 >
                   提现记录
                 </el-dropdown-item>
                 <el-dropdown-item
-                  v-if="scope.row.status === AreaAgentApplyStatusEnum.APPROVED.status"
-                  v-hasPermi="['trade:regional-agent:update-status']"
+                  v-if="scope.row.status === 2"
+                  v-hasPermi="['product:regional-agent:approve']"
                   command="disable"
                 >
-                  禁用代理
+                  拒绝代理
                 </el-dropdown-item>
                 <el-dropdown-item
-                  v-if="scope.row.status === AreaAgentApplyStatusEnum.DISABLED.status"
-                  v-hasPermi="['trade:regional-agent:update-status']"
+                  v-if="scope.row.status === 3"
+                  v-hasPermi="['product:regional-agent:approve']"
                   command="enable"
                 >
-                  启用代理
+                  通过代理
                 </el-dropdown-item>
                 <el-dropdown-item
-                  v-hasPermi="['trade:regional-agent:update']"
+                  v-hasPermi="['product:regional-agent:update']"
                   command="edit"
                 >
                   编辑信息
                 </el-dropdown-item>
                 <el-dropdown-item
-                  v-hasPermi="['trade:regional-agent:delete']"
+                  v-hasPermi="['product:regional-agent:delete']"
                   command="delete"
                 >
                   删除代理
@@ -244,8 +235,9 @@ const queryParams = reactive({
   pageNo: 1,
   pageSize: 10,
   userId: null,
-  agentLevel: null,
-  status: AreaAgentApplyStatusEnum.APPROVED.status, // 默认查询已审核通过的代理
+  areaType: null,
+  areaName: null,
+  status: 2, // 默认查询已审核通过的代理
   applyTime: []
 })
 const queryFormRef = ref() // 搜索的表单
@@ -271,7 +263,7 @@ const handleQuery = () => {
 /** 重置按钮操作 */
 const resetQuery = () => {
   queryFormRef.value.resetFields()
-  queryParams.status = AreaAgentApplyStatusEnum.APPROVED.status // 重置时保持默认状态
+  queryParams.status = 2 // 重置时保持默认状态
   handleQuery()
 }
 
@@ -288,10 +280,10 @@ const handleCommand = (command: string, row: RegionalAgentApi.RegionalAgentVO) =
       handleWithdraw(row)
       break
     case 'disable':
-      handleUpdateStatus(row, AreaAgentApplyStatusEnum.DISABLED.status)
+      handleUpdateStatus(row, 3)
       break
     case 'enable':
-      handleUpdateStatus(row, AreaAgentApplyStatusEnum.APPROVED.status)
+      handleUpdateStatus(row, 2)
       break
     case 'edit':
       handleEdit(row)
@@ -322,12 +314,13 @@ const handleWithdraw = (row: RegionalAgentApi.RegionalAgentVO) => {
 
 /** 更新代理状态 */
 const handleUpdateStatus = async (row: RegionalAgentApi.RegionalAgentVO, status: number) => {
-  const statusText = status === AreaAgentApplyStatusEnum.DISABLED.status ? '禁用' : '启用'
+  const statusText = status === 3 ? '禁用' : '启用'
   try {
     await message.confirm(`确认要${statusText}"${row.nickname}"的代理资格吗？`)
-    await RegionalAgentApi.updateRegionalAgentStatus({
+    await RegionalAgentApi.approveRegionalAgent({
       id: row.id,
-      status: status
+      status: status,
+      auditRemark: `管理员${statusText}代理`
     })
     message.success(`${statusText}成功`)
     await getList()

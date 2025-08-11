@@ -8,17 +8,17 @@
       label-width="80px"
     >
       <el-form-item label="审核状态">
-        <el-tag v-if="formData.auditStatus === 20" type="success">
+        <el-tag v-if="formData.status === 2" type="success">
           审核通过
         </el-tag>
-        <el-tag v-else-if="formData.auditStatus === 30" type="danger">
-          审核拒绝
+        <el-tag v-else-if="formData.status === 3" type="danger">
+          审核不通过
         </el-tag>
       </el-form-item>
       <el-form-item label="审核原因" prop="auditReason">
         <el-input
           v-model="formData.auditReason"
-          :placeholder="formData.auditStatus === 30 ? '请输入拒绝原因' : '请输入审核原因'"
+          :placeholder="formData.status === 3 ? '请输入拒绝原因' : '请输入审核原因'"
           :rows="3"
           type="textarea"
         />
@@ -44,7 +44,7 @@ const dialogTitle = ref('') // 弹窗的标题
 const formLoading = ref(false) // 表单的加载中：1）修改时的数据加载；2）提交的按钮禁用
 const formData = ref({
   id: undefined,
-  auditStatus: undefined,
+  status: undefined,
   auditReason: ''
 })
 const formRules = reactive({
@@ -53,17 +53,17 @@ const formRules = reactive({
 const formRef = ref() // 表单 Ref
 
 /** 打开弹窗 */
-const open = async (row: RegionalAgentWithdrawApi.RegionalAgentWithdrawVO, auditStatus: number) => {
+const open = async (row: RegionalAgentWithdrawApi.RegionalAgentWithdrawVO, status: number) => {
   dialogVisible.value = true
   resetForm()
   formData.value.id = row.id
-  formData.value.auditStatus = auditStatus
+  formData.value.status = status
   
-  if (auditStatus === 20) {
+  if (status === 2) {
     dialogTitle.value = '审核通过'
     formData.value.auditReason = '审核通过'
   } else {
-    dialogTitle.value = '审核拒绝'
+    dialogTitle.value = '审核不通过'
     formData.value.auditReason = ''
   }
 }
@@ -79,7 +79,7 @@ const submitForm = async () => {
   // 提交请求
   formLoading.value = true
   try {
-    await RegionalAgentWithdrawApi.auditRegionalAgentWithdraw(formData.value)
+    await RegionalAgentWithdrawApi.approveRegionalAgentWithdraw(formData.value)
     message.success('审核成功')
     dialogVisible.value = false
     // 发送操作成功的事件
@@ -93,7 +93,7 @@ const submitForm = async () => {
 const resetForm = () => {
   formData.value = {
     id: undefined,
-    auditStatus: undefined,
+    status: undefined,
     auditReason: ''
   }
   formRef.value?.resetFields()
