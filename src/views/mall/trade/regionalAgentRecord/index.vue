@@ -85,7 +85,6 @@
         align="center"
         prop="price"
         min-width="60"
-        :formatter="fenToYuanFormat"
       />
       <el-table-column label="说明" align="center" prop="description" min-width="120" />
       <el-table-column label="状态" align="center" prop="status" min-width="85">

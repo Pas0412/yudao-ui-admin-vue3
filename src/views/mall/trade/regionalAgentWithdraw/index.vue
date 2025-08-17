@@ -217,7 +217,9 @@
 
 <script setup lang="ts">
 import { DICT_TYPE, getIntDictOptions, getStrDictOptions } from '@/utils/dict'
-import { fenToYuan, fenToYuanFormat, formatDate } from '@/utils/formatTime'
+import { fenToYuan } from '@/utils'
+import { fenToYuanFormat } from '@/utils/formatter'
+import { formatDate } from '@/utils/formatTime'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { ref, reactive, onMounted } from 'vue'
 import * as RegionalAgentApi from '@/api/mall/trade/regionalAgent'
