@@ -107,8 +107,8 @@
       </el-table-column>
       <el-table-column label="提现金额" align="left" prop="price" min-width="80px">
         <template #default="scope">
-          <div>金　额：￥{{ fenToYuan(scope.row.price) }}</div>
-          <div>手续费：￥{{ fenToYuan(scope.row.feePrice) }}</div>
+          <div>金　额：￥{{ scope.row.price }}</div>
+          <!-- <div>手续费：￥{{ fenToYuan(scope.row.feePrice) }}</div> -->
         </template>
       </el-table-column>
       <el-table-column label="提现方式" align="left" prop="type" min-width="80px">
@@ -141,13 +141,16 @@
           </div>
         </template>
       </el-table-column>
-      <el-table-column
+            <el-table-column
         label="申请时间"
         align="left"
         prop="createTime"
-        :formatter="dateFormatter"
         width="180px"
-      />
+      >
+        <template #default="scope">
+          {{ formatDate(scope.row.createTime, 'YYYY-MM-DD HH:mm') }}
+        </template>
+      </el-table-column>
       <el-table-column label="备注" align="left" prop="remark" />
       <el-table-column label="状态" align="left" prop="status" min-width="120px">
         <template #default="scope">
